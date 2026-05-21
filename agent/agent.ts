@@ -1,4 +1,6 @@
+// @ts-ignore
 const send = (...args: any[]) => (globalThis as any)._pixelSend(...args);
+// @ts-ignore
 const recv = (...args: any[]) => (globalThis as any)._pixelRecv(...args);
 "cut";
 // =============================================================================
