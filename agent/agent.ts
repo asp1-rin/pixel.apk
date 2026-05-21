@@ -1,3 +1,4 @@
+const send = (payload: any, data?: any) => (globalThis as any)._pixelSend(payload, data);
 "cut";
 // =============================================================================
 //  Offsets, agentSyms and patch values are injected at runtime from the host
@@ -7,7 +8,6 @@
 //  Pre-injection the file stays valid TypeScript thanks to JSON.parse on
 //  string literals.
 // =============================================================================
-const send = (payload: any, data?: any) => (globalThis as any)._pixelSend(payload, data);
 const xaOffset   = JSON.parse('/*xaOffset*/');
 const anOffset   = JSON.parse('/*anOffset*/');
 const eposOffset = JSON.parse('/*eposOffset*/');
