@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { XzReadableStream } = require('xz-decompress');
 
-const FRIDA_VERSION = '16.4.10';
+const FRIDA_VERSION = '17.1.4';
 const ARCHES = ['arm', 'arm64', 'x86', 'x86_64'];
 const BIN = path.join(__dirname, '..', 'bin');
 
