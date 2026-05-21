@@ -1,3 +1,4 @@
+(globalThis as any).send = (globalThis as any)._pixelSend || (globalThis as any).send;
 "cut";
 // =============================================================================
 //  Offsets, agentSyms and patch values are injected at runtime from the host
