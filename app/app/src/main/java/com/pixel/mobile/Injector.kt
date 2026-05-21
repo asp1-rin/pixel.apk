@@ -53,6 +53,7 @@ object Injector {
         // inject detached so `su` returns while the agent keeps running.
         val s = "\$"
         val script = """
+            setenforce 0 2>/dev/null || true
             PKG="${PKG}"
             WORK="${WORK}"
             mkdir -p "${s}WORK" || exit 1
