@@ -1,4 +1,3 @@
-const send = (payload: any, data?: any) => (globalThis as any)._pixelSend(payload, data);
 "cut";
 // =============================================================================
 //  Offsets, agentSyms and patch values are injected at runtime from the host
