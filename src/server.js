@@ -92,18 +92,30 @@
     try { conn.close(); } catch (e) {}
   }
 
+  // Replace a global even when the Frida runtime defines it non-writable
+  // (its `send`/`recv` are read-only): a plain assignment throws under
+  // 'use strict' (killing this IIFE before Socket.listen — the old white
+  // screen) and silently no-ops in sloppy mode. defineProperty redefines it
+  // as long as it is configurable; the assignment fallback covers the rest.
+  function installGlobal(name, fn) {
+    try {
+      Object.defineProperty(globalThis, name, { configurable: true, writable: true, value: fn });
+      if (globalThis[name] === fn) return;
+    } catch (e) {}
+    try { globalThis[name] = fn; } catch (e) {}
+  }
+
   // Frida-compatible: send(payload[, data]). `data` (ArrayBuffer) is rare in
   // this agent; forward it base64-tagged so nothing is silently lost.
-// 変更後
-globalThis._pixelSend = function (payload, data) {
-  var env = { __pixel: 'send', payload: payload };
-  if (data) {
-    var u = new Uint8Array(data), bin = '';
-    for (var i = 0; i < u.length; i++) bin += String.fromCharCode(u[i]);
-    env.data = (typeof btoa === 'function') ? btoa(bin) : null;
+  function pixelSend(payload, data) {
+    var env = { __pixel: 'send', payload: payload };
+    if (data) {
+      var u = new Uint8Array(data), bin = '';
+      for (var i = 0; i < u.length; i++) bin += String.fromCharCode(u[i]);
+      env.data = (typeof btoa === 'function') ? btoa(bin) : null;
+    }
+    broadcast(env);
   }
-  broadcast(env);
-};
 
   function deliver(msg) {
     // Frida semantics: each recv() handler consumes exactly one message, FIFO.
@@ -121,7 +133,7 @@ globalThis._pixelSend = function (payload, data) {
   }
 
   // Frida-compatible: recv(callback) or recv(type, callback).
-  globalThis._pixelRecv = function (a, b) {
+  function pixelRecv(a, b) {
     var type = (typeof a === 'string') ? a : null;
     var cb = (typeof a === 'function') ? a : b;
     if (typeof cb !== 'function') return { wait: function () {} };
@@ -136,7 +148,11 @@ globalThis._pixelSend = function (payload, data) {
     }
     recvHandlers.push({ type: type, cb: cb });
     return { wait: function () {} };
-  };
+  }
+
+  // Shadow Frida's send()/recv() so the unmodified agent talks to the phone UI.
+  installGlobal('send', pixelSend);
+  installGlobal('recv', pixelRecv);
 
   function reportError(e) {
     try { broadcast({ __pixel: 'send', payload: ['log', 'agent-error', String(e && e.stack || e)] }); } catch (_) {}
