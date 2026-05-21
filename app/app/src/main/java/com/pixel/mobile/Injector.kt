@@ -16,7 +16,7 @@ import java.io.File
  */
 object Injector {
     const val PKG = "com.gameparadiso.milkchoco"
-    private const val VER = "16.4.10"
+    private const val VER = "17.9.10"
     private const val WORK = "/data/local/tmp/pixel"
 
     enum class Result { INJECTED, ALREADY_RUNNING, NO_ROOT, GAME_NOT_FOUND, ASSET_MISSING, ERROR }
