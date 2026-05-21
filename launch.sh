@@ -11,7 +11,7 @@
 #  One-time placement (push these onto the phone, e.g. via your file manager,
 #  Termux, or `adb push` from any PC just once):
 #      WORK/agent.js                                   <- mobile/dist/agent.js
-#      WORK/frida-inject-16.4.10-android-<abi>         <- bin/frida-inject/...
+#      WORK/frida-inject-17.9.10-android-<abi>         <- bin/frida-inject/...
 #  Default WORK = /data/local/tmp/pixel
 #
 #  Usage (as root):
