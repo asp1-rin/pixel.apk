@@ -1,48 +1,86 @@
-# MCO tool — GameGuardian → standalone APK
+# Pixel — standalone MilkChoco APK (rooted phone, no GameGuardian, no PC)
 
-This repo holds the **legacy** GameGuardian-based MilkChoco
-(`com.gameparadiso.milkchoco`) practice tool, plus notes on the standalone
-replacement that needs **no GameGuardian**.
+A single installable APK that delivers the **full `pixel.exe` feature set** on a
+**rooted phone** with MilkChoco (`com.gameparadiso.milkchoco`) installed — and
+nothing else. No GameGuardian, no PC, no ADB, no terminal.
 
-## Legacy (GameGuardian) — what's here
+```
+   Install Pixel.apk
+        │
+        ▼  open the app
+   ┌──────────────┐   login (real auth)   ┌──────────────┐   tap Connect (root)
+   │  LOGIN screen │ ───────────────────► │ CONNECT screen │ ───────────────────┐
+   └──────────────┘                       └──────────────┘                     │
+                                                                                ▼
+   phone WebView  ◄───── http://127.0.0.1:27345 ◄──── in-process HTTP/SSE server (src/server.js)
+        ▲                  full pixel.exe panel        shadows Frida send()/recv()
+        └──────────── unmodified pixel.exe agent (agent/agent.ts) injected by frida-inject
+```
 
-- `script_for_gg_fixed.lua.txt` — GameGuardian Lua. Does the real memory
-  read/write (shoot, reload, damage, respawn, speed, blackhole, aimbot, aim
-  assist, enemy scan, capture/teleport). It reads commands from
-  `/sdcard/Download/MCO_GG_command.json`.
-- `MCO-Remote.apk` — a floating-menu UI app that *only* writes that JSON file.
+## How it works
 
-So the old setup needs **two things plus root**: GameGuardian (running the Lua
-to touch memory) and the remote APK (the UI). Root is required either way —
-reading another app's memory is impossible inside the Android sandbox without
-it.
+This is the desktop **`pixel.exe`** tool, unchanged, running on the phone:
 
-## Standalone (no GameGuardian) — the replacement
+- `agent/` (the pixel.exe Frida agent) is injected into MilkChoco by a bundled,
+  ABI-matched `frida-inject` (root). It does all the memory work.
+- `src/server.js` runs a tiny HTTP/SSE server **inside the game process** and
+  shadows Frida's `send()`/`recv()`, so the **unmodified desktop renderer**
+  (`web-src/`) is served at `http://127.0.0.1:27345` — every cheat, teleport,
+  changer, kicker, ESP/aim, resource tool and setting works, automatically.
+- The APK (`app/`) is a thin native shell: a branded **login** screen
+  (real auth against the existing backend), then a one-button **Connect** that
+  injects with root and loads the panel. See `app/.../MainActivity.kt`,
+  `Bridge.kt` (native login + connect), `Injector.kt` (root injection).
 
-The same features now run from **a single installable APK** with no
-GameGuardian and no terminal. It is built from the **`pixel` repo's
-`mobile/`** project, which already injects a Frida agent (a superset of the Lua
-features) into MilkChoco and serves the full control panel on
-`http://127.0.0.1:27345`.
+> ⚠️ **Root is mandatory.** Reading another app's memory is impossible inside
+> the Android sandbox without it — the same requirement GameGuardian has. This
+> removes the GameGuardian dependency and every manual step, not root.
+> Research / education only.
 
-What changed to make it install-and-go (in the `pixel` repo, branch
-`claude/lua-tool-standalone-Erpd2`):
+## Use it
 
-- The APK now **bundles** `dist/agent.js` + the `frida-inject` binary for every
-  ABI as assets.
-- On launch, `Injector.kt` does what the old `launch.sh` did by hand: requests
-  root (`su`), drops the agent + ABI-matched `frida-inject` into
-  `/data/local/tmp/pixel`, launches/attaches MilkChoco, injects, and loads the
-  panel.
+1. Get `Pixel.apk` from GitHub Actions (the `apk` artifact) or a release.
+2. Install it on the **rooted** phone (MilkChoco already installed).
+3. Open **Pixel** → log in with your key → tap **Connect to MilkChoco** →
+   grant the root (`su`) prompt. The full panel loads once injection finishes.
 
-### Use it
+## Build
 
-1. Build `pixel/mobile` (CI on push produces `pixel-mobile.apk`, or
-   `npm install && npm run build` then build `mobile/app` in Android Studio).
-2. Install `pixel-mobile.apk` on the **rooted** phone.
-3. Open it and grant the root (`su`) prompt — the panel appears once injection
-   finishes. GameGuardian and `MCO-Remote.apk` are no longer needed.
+CI does it all — push and the `apk` job builds `Pixel.apk`
+(`npm run build` produces `dist/agent.js` + `bin/frida-inject-*`, which the
+Gradle `copyPixelAssets` task bundles into the APK; then `gradle assembleDebug`).
 
-> Root is still mandatory (same as GameGuardian). A non-rooted phone cannot
-> inject into another app — that's the Android sandbox, not something code can
-> bypass. Research / education only.
+Locally (agent only; the APK needs the Android SDK and is best built in CI):
+
+```bash
+npm install && npm run build      # -> dist/agent.js + per-ABI bin/frida-inject
+```
+
+A `dist/pixel-*.zip` + `launch.sh` manual-injection bundle is also produced as a
+fallback for use without the APK.
+
+## Layout
+
+```
+agent/                  pixel.exe Frida agent (+ offsets, types) — unmodified
+web-src/                pixel.exe desktop renderer — unmodified (full UI)
+src/server.js           in-agent HTTP/SSE bridge (shadows send/recv)
+build.cjs, scripts/     build pipeline -> dist/agent.js + per-ABI bundles
+launch.sh               manual on-device root injector (fallback)
+app/                    the installable APK (login + connect shell -> panel)
+  app/src/main/java/com/pixel/mobile/
+      MainActivity.kt   branded login -> connect shell, then loads the panel
+      Bridge.kt         native real-auth POST + connect trigger
+      Injector.kt       root su -> push agent + frida-inject -> inject
+  app/src/main/res/     adaptive launcher icon (from the pixel logo), strings
+legacy/                 the old GameGuardian tool (Lua + MCO-Remote.apk), kept for reference
+```
+
+## Honest status
+
+Verified by the build pipeline: agent + renderer bundling, offset injection,
+generated-script syntax. **Not** verifiable from a CI/sandbox and needing one
+real pass on a rooted device: on-device runtime (Frida `Socket`, `frida-inject`
+under root, SELinux ptrace), the in-app `su` injection, the real login round
+trip to the backend, and the Gradle APK build itself (standard recipe, runs in
+CI — there is no Android SDK in the dev sandbox).
