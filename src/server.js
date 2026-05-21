@@ -95,19 +95,15 @@
   // Frida-compatible: send(payload[, data]). `data` (ArrayBuffer) is rare in
   // this agent; forward it base64-tagged so nothing is silently lost.
 // 変更後
-Object.defineProperty(globalThis, 'send', {
-  configurable: true,
-  writable: true,
-  value: function (payload, data) {
-    var env = { __pixel: 'send', payload: payload };
-    if (data) {
-      var u = new Uint8Array(data), bin = '';
-      for (var i = 0; i < u.length; i++) bin += String.fromCharCode(u[i]);
-      env.data = (typeof btoa === 'function') ? btoa(bin) : null;
-    }
-    broadcast(env);
+var _pixelSend = function (payload, data) {
+  var env = { __pixel: 'send', payload: payload };
+  if (data) {
+    var u = new Uint8Array(data), bin = '';
+    for (var i = 0; i < u.length; i++) bin += String.fromCharCode(u[i]);
+    env.data = (typeof btoa === 'function') ? btoa(bin) : null;
   }
-});
+  broadcast(env);
+};
 
   function deliver(msg) {
     // Frida semantics: each recv() handler consumes exactly one message, FIFO.
