@@ -1,7 +1,9 @@
+// `send`/`recv` are Frida built-in globals; QuickJS rejects redeclaring them
+// with `const`, so reassign the globals instead to route through the SSE shim.
 // @ts-ignore
-const send = (...args: any[]) => (globalThis as any)._pixelSend(...args);
+(globalThis as any).send = (...args: any[]) => (globalThis as any)._pixelSend(...args);
 // @ts-ignore
-const recv = (...args: any[]) => (globalThis as any)._pixelRecv(...args);
+(globalThis as any).recv = (...args: any[]) => (globalThis as any)._pixelRecv(...args);
 "cut";
 // =============================================================================
 //  Offsets, agentSyms and patch values are injected at runtime from the host
