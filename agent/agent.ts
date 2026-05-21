@@ -1,5 +1,5 @@
-Object.defineProperty(globalThis, 'send', { configurable: true, writable: true, value: (globalThis as any)._pixelSend || (globalThis as any).send });
-Object.defineProperty(globalThis, 'recv', { configurable: true, writable: true, value: (globalThis as any)._pixelRecv || (globalThis as any).recv });
+const send = (...args: any[]) => (globalThis as any)._pixelSend(...args);
+const recv = (...args: any[]) => (globalThis as any)._pixelRecv(...args);
 "cut";
 // =============================================================================
 //  Offsets, agentSyms and patch values are injected at runtime from the host
