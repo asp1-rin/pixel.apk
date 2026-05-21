@@ -25,7 +25,7 @@ const WEB_DIR = path.join(ROOT, 'web');
 const BIN = path.join(ROOT, 'bin');
 const LAUNCH = path.join(ROOT, 'launch.sh');
 const DIST = path.join(ROOT, 'dist');
-const FRIDA_VERSION = '16.4.10';
+const FRIDA_VERSION = '17.1.4';
 const ARCHES = ['arm', 'arm64', 'x86', 'x86_64'];
 
 const die = (m) => { console.error('[build] ' + m); process.exit(1); };
