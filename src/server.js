@@ -95,7 +95,7 @@
   // Frida-compatible: send(payload[, data]). `data` (ArrayBuffer) is rare in
   // this agent; forward it base64-tagged so nothing is silently lost.
 // 変更後
-var _pixelSend = function (payload, data) {
+globalThis._pixelSend = function (payload, data) {
   var env = { __pixel: 'send', payload: payload };
   if (data) {
     var u = new Uint8Array(data), bin = '';
