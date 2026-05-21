@@ -21,7 +21,7 @@
 set -e
 
 PKG="com.gameparadiso.milkchoco"
-VER="16.4.10"
+VER="17.9.10"
 WORK="${WORK:-/data/local/tmp/pixel}"
 AGENT="$WORK/agent.js"
 
