@@ -5,7 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "Node",
     "outDir": "./build",
-    "types": [],
+    "types": ["frida-gum"],
     "esModuleInterop": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
