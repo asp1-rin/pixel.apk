@@ -84,3 +84,11 @@ real pass on a rooted device: on-device runtime (Frida `Socket`, `frida-inject`
 under root, SELinux ptrace), the in-app `su` injection, the real login round
 trip to the backend, and the Gradle APK build itself (standard recipe, runs in
 CI — there is no Android SDK in the dev sandbox).
+
+One parity caveat by design: on the desktop, **ESP / aim-circle visuals** are
+painted by a separate always-on-top overlay window over the game. The phone
+panel is a normal app, so those *on-game visuals* aren't drawn (a future
+SYSTEM_ALERT_WINDOW overlay could add them). The underlying logic still runs in
+the agent — aimbot, aim-by-circle targeting, blackhole, teleport, speed,
+kicker, changer, resource tools, etc. all work; only the ESP box/tracer drawing
+over the live game is absent.

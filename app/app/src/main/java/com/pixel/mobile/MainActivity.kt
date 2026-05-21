@@ -48,9 +48,11 @@ class MainActivity : AppCompatActivity() {
                 v: WebView?, req: android.webkit.WebResourceRequest?,
                 err: android.webkit.WebResourceError?
             ) {
-                // Only meaningful once we've navigated to the agent panel: it
-                // may not be up for a moment after injection — retry shortly.
-                if (panelMode) {
+                // Only meaningful once we've navigated to the agent panel, and
+                // only for the main document (a stray subresource error must not
+                // kick a reload loop): the agent may not be up for a moment
+                // right after injection — retry shortly.
+                if (panelMode && req?.isForMainFrame == true) {
                     v?.loadData(WAITING_HTML, "text/html", "utf-8")
                     ui.postDelayed({ web.loadUrl(panelUrl) }, 2500)
                 }
