@@ -121,7 +121,7 @@ globalThis._pixelSend = function (payload, data) {
   }
 
   // Frida-compatible: recv(callback) or recv(type, callback).
-  globalThis.recv = function (a, b) {
+  globalThis._pixelRecv = function (a, b) {
     var type = (typeof a === 'string') ? a : null;
     var cb = (typeof a === 'function') ? a : b;
     if (typeof cb !== 'function') return { wait: function () {} };
