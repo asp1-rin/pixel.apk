@@ -261,6 +261,30 @@ const lan:{[key:string]:{[key:string]:string}} = {
         'ja':'即時',
         'zh':'瞬间',
     },
+    'aim-speed':{
+        'en':'Follow Speed (slow ← → fast)',
+        'ko':'따라가는 속도 (느림 ← → 빠름)',
+        'ja':'追従速度 (遅い ← → 速い)',
+        'zh':'跟随速度 (慢 ← → 快)',
+    },
+    'aim-fov':{
+        'en':'Target Range (FOV)',
+        'ko':'목표 인식 범위',
+        'ja':'ターゲット範囲',
+        'zh':'目标识别范围',
+    },
+    'aim-ignore-team':{
+        'en':'Skip Teammates',
+        'ko':'아군 제외',
+        'ja':'味方を除外',
+        'zh':'排除队友',
+    },
+    'aim-ignore-death':{
+        'en':'Skip Dead Players',
+        'ko':'사망자 제외',
+        'ja':'死亡者を除外',
+        'zh':'排除死亡玩家',
+    },
     'aimbot-speed':{
         'en':'Aimbot Speed',
         'ko':'에임봇 속도',
