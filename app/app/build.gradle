@@ -11,8 +11,8 @@ android {
         applicationId 'com.pixel.mobile'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 156
+        versionName '1.56.0'
     }
 
     buildTypes {
