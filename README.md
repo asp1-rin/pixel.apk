@@ -1,4 +1,4 @@
-# Pixel — standalone MilkChoco APK (rooted phone, no GameGuardian, no PC)
+# Pixel — standalone MilkChoco APK (rooted environment required)
 
 A single installable APK that runs the **`pixel.exe` Frida agent** against
 MilkChoco (`com.gameparadiso.milkchoco`) on a **rooted phone** — no
