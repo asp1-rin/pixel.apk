@@ -11,9 +11,9 @@ GameGuardian, no PC, no ADB, no terminal. The panel is intentionally aim-only:
         │
         ▼  open the app
    ┌──────────────┐   login (real auth)   ┌──────────────┐   tap Connect (root)
-   │  LOGIN screen │ ───────────────────► │ CONNECT screen │ ───────────────────┐
-   └──────────────┘                       └──────────────┘                     │
-                                                                                ▼
+   │ LOGIN screen │ ───────────────────►  │CONNECT screen│ ───────────────────┐
+   └──────────────┘                       └──────────────┘                    │
+                                                                              ▼
    phone WebView  ◄───── http://127.0.0.1:27345 ◄──── in-process HTTP/SSE server (src/server.js)
         ▲                  aim-only control panel       shadows Frida send()/recv()
         └──────────── pixel.exe agent (agent/agent.ts) injected by frida-inject --realm=emulated
